@@ -1,0 +1,26 @@
+# Evidencia Gitleaks — estado final (después de corregir)
+
+Herramienta: gitleaks 8.30.1
+Fecha: 2026-11-25
+
+## Configuración por defecto
+
+    $ gitleaks dir .
+    10:50AM INF scanned ~15095 bytes (15.10 KB) in 29.1ms
+10:50AM INF no leaks found
+
+    $ gitleaks git .
+    10:50AM INF 3 commits scanned.
+10:50AM INF scanned ~11881 bytes (11.88 KB) in 399ms
+10:50AM INF no leaks found
+
+## Diagnóstico con la regla sin filtro de entropía
+
+    $ gitleaks dir . -c gitleaks-diagnostic.toml
+    10:50AM INF scanned ~15095 bytes (15.10 KB) in 126ms
+10:50AM INF no leaks found
+
+Conclusión: el token ya no existe en el árbol de trabajo. El historial Git
+conserva el commit original con el valor ficticio; en un incidente real se
+debe rotar la credencial y limpiar el historial. Aquí el valor es ficticio y
+no concede acceso.

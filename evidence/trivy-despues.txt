@@ -1,0 +1,37 @@
+# Evidencia Trivy — estado final (después de corregir)
+
+Herramienta: trivy 0.76.2
+Imagen: security-as-code-lab:local (`urllib3==2.8.0`)
+Comando: `trivy image --scanners vuln --severity HIGH,CRITICAL security-as-code-lab:local`
+Fecha: 2026-11-25
+
+## Resumen
+
+    Sistema operativo (Debian 13.8): 54 vulnerabilidades HIGH/CRITICAL
+    Dependencias Python:              0 vulnerabilidades HIGH/CRITICAL
+
+## Resultado del gate de CI (solo dependencias, solo corregibles)
+
+    $ trivy image --scanners vuln --severity HIGH,CRITICAL --vuln-type library --ignore-unfixed security-as-code-lab:local
+
+    Python (python-pkg)
+    ===================
+    Total: 0 (HIGH: 0, CRITICAL: 0)
+
+    Legend:
+    - '-': Not scanned
+    - '0': Clean (no security findings detected)
+
+## Interpretación
+
+- `urllib3` pasó de 1.25.3 a 2.8.0: se corrigen CVE-2020-7212, CVE-2023-43804,
+  CVE-2025-66418, CVE-2025-66471, CVE-2026-21441, CVE-2026-44431 y
+  CVE-2026-97689.
+- Se eliminaron `pip`, `setuptools`, `wheel` y `ensurepip` de la imagen final,
+  con lo que desaparecen los CVEs de herramientas de empaquetado y se reduce la
+  superficie de ataque.
+- Permanecen 54 hallazgos HIGH del sistema operativo de la imagen base.
+  Son paquetes de Debian sin versión corregida disponible (o que dependen de
+  una actualización de la imagen base). No se introdujeron en este cambio y no
+  se corrigen desde `requirements.txt`; se mitigan actualizando periódicamente
+  la imagen base.

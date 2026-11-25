@@ -1,0 +1,23 @@
+# Evidencia Checkov — estado final (después de corregir)
+
+Herramienta: checkov 3.4.11
+Comando: `checkov -d ./infra --config-file .checkov.yaml`
+Fecha: 2026-11-25
+
+## Resumen
+
+    Passed checks: 14, Failed checks: 0, Skipped checks: 0
+    Recursos analizados: 6
+
+## Controles que ahora pasan
+
+- CKV_AWS_20 — ACL pública de lectura eliminada (bucket sin ACL).
+- CKV_AWS_53, CKV_AWS_54, CKV_AWS_55, CKV_AWS_56 — bloqueo de acceso público activo.
+- CKV_AWS_19 y CKV_AWS_145 — cifrado en reposo con KMS.
+- CKV_AWS_21 — versionado habilitado.
+- CKV2_AWS_6 — Public Access Block presente.
+- CKV2_AWS_61 y CKV_AWS_300 — ciclo de vida y limpieza de cargas multipart.
+- CKV2_AWS_65 — ACL deshabilitadas mediante `BucketOwnerEnforced`.
+
+Las excepciones CKV_AWS_18 (logging), CKV_AWS_144 (replicación) y CKV2_AWS_62
+(notificaciones) están justificadas en `.checkov.yaml` y en el informe.
