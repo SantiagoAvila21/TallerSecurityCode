@@ -99,8 +99,26 @@ El workflow `.github/workflows/security.yml` se dispara en **pull requests hacia
 Gitleaks compare los commits del PR. No se concede `write` a ningún job. Además,
 `concurrency` cancela ejecuciones antiguas de la misma rama.
 
-**Resultado:** ver `evidence/github-actions.md` y la pestaña **Actions** del
-repositorio. La ejecución se realiza sobre el push a `main`.
+**Resultado:** la ejecución final sobre `main` terminó en **success** con los
+tres jobs en verde:
+<https://github.com/SantiagoAvila21/TallerSecurityCode/actions/runs/45649921217>
+
+**Incidencias encontradas y corregidas en el propio pipeline.** La primera
+ejecución falló y sirvió para detectar dos problemas reales:
+
+1. El job de imagen falló en `Set up job` porque el tag
+   `aquasecurity/trivy-action@0.28.0` no existe: los tags del repositorio llevan
+   prefijo `v`. Se cambió a `v0.36.0`.
+2. El job de Gitleaks falló porque el reporte JSON crudo de Trivy incluía la
+   variable `GPG_KEY` de la imagen base y Gitleaks la interpretó como
+   `generic-api-key`. Se sanitizaron los reportes (se conservan solo los
+   resultados de vulnerabilidades, sin la configuración de la imagen) y se
+   repitió la ejecución.
+
+Esto ilustra por qué el pipeline debe probarse: un control mal configurado
+puede fallar por motivos distintos a una vulnerabilidad real, y un reporte de
+evidencia puede introducir hallazgos si no se redacta. Ver
+`evidence/github-actions.md`.
 
 ## 5. Decisiones del desarrollador
 
@@ -128,8 +146,8 @@ repositorio. La ejecución se realiza sobre el push a `main`.
 - `evidence/gitleaks-antes.txt` y `evidence/gitleaks-despues.txt`
 - `evidence/checkov-antes.txt` y `evidence/checkov-despues.txt`
 - `evidence/trivy-antes.txt` y `evidence/trivy-despues.txt`
-- `evidence/github-actions.md` (resultado de la ejecución en Actions)
-- `evidence/raw/` (reportes JSON y tablas completas de las herramientas)
+- `evidence/github-actions.md` (resultado de las ejecuciones en Actions)
+- `evidence/raw/` (reportes JSON sanitizados y tablas completas de las herramientas)
 - Pull request: el repositorio se publicó directamente en `main` por solicitud
   del autor; el workflow también se ejecuta en cada PR hacia `main`.
 
