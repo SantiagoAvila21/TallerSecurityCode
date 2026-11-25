@@ -1,0 +1,31 @@
+# Evidencia Checkov — estado inicial (antes de corregir)
+
+Herramienta: checkov 3.4.11
+Comando: `checkov -d ./infra`
+Fecha: 2026-11-25
+
+## Resumen
+
+    Passed checks: 5, Failed checks: 12, Skipped checks: 0
+    Recursos analizados: 3
+
+## Controles fallidos
+
+| Control | Descripción | Archivo | Recurso |
+|---|---|---|---|
+| CKV2_AWS_6 | Ensure that S3 bucket has a Public Access block | `/main.tf` líneas [13, 15] | `aws_s3_bucket.lab_data` |
+| CKV2_AWS_61 | Ensure that an S3 bucket has a lifecycle configuration | `/main.tf` líneas [13, 15] | `aws_s3_bucket.lab_data` |
+| CKV2_AWS_62 | Ensure S3 buckets should have event notifications enabled | `/main.tf` líneas [13, 15] | `aws_s3_bucket.lab_data` |
+| CKV_AWS_144 | Ensure that S3 bucket has cross-region replication enabled | `/main.tf` líneas [13, 15] | `aws_s3_bucket.lab_data` |
+| CKV_AWS_145 | Ensure that S3 buckets are encrypted with KMS by default | `/main.tf` líneas [13, 15] | `aws_s3_bucket.lab_data` |
+| CKV_AWS_18 | Ensure the S3 bucket has access logging enabled | `/main.tf` líneas [13, 15] | `aws_s3_bucket.lab_data` |
+| CKV_AWS_20 | S3 Bucket has an ACL defined which allows public READ access. | `/main.tf` líneas [13, 15] | `aws_s3_bucket.lab_data` |
+| CKV_AWS_21 | Ensure all data stored in the S3 bucket have versioning enabled | `/main.tf` líneas [13, 15] | `aws_s3_bucket.lab_data` |
+| CKV_AWS_53 | Ensure S3 bucket has block public ACLS enabled | `/main.tf` líneas [22, 28] | `aws_s3_bucket_public_access_block.lab_data` |
+| CKV_AWS_54 | Ensure S3 bucket has block public policy enabled | `/main.tf` líneas [22, 28] | `aws_s3_bucket_public_access_block.lab_data` |
+| CKV_AWS_55 | Ensure S3 bucket has ignore public ACLs enabled | `/main.tf` líneas [22, 28] | `aws_s3_bucket_public_access_block.lab_data` |
+| CKV_AWS_56 | Ensure S3 bucket has 'restrict_public_buckets' enabled | `/main.tf` líneas [22, 28] | `aws_s3_bucket_public_access_block.lab_data` |
+
+Los hallazgos críticos del laboratorio son el ACL `public-read` (CKV_AWS_20)
+y el bloqueo de acceso público deshabilitado en sus cuatro opciones
+(CKV_AWS_53, CKV_AWS_54, CKV_AWS_55, CKV_AWS_56).

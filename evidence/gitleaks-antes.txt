@@ -1,0 +1,69 @@
+# Evidencia Gitleaks — estado inicial (antes de corregir)
+
+Herramienta: gitleaks 8.30.1
+Fecha: 2026-11-25
+
+## 1. Comando indicado por el laboratorio (configuración por defecto)
+
+    $ gitleaks dir .
+    $ gitleaks git .
+
+Resultado real con la configuración por defecto de gitleaks 8.30.1:
+
+    ○
+    │╲
+    │ ○
+    ○ ░
+    ░    gitleaks
+
+10:42AM INF scanned ~11515 bytes (11.52 KB) in 24.4ms
+10:42AM INF no leaks found
+
+    ○
+    │╲
+    │ ○
+    ○ ░
+    ░    gitleaks
+
+10:42AM INF 3 commits scanned.
+10:42AM INF scanned ~11881 bytes (11.88 KB) in 248ms
+10:42AM INF no leaks found
+
+> Observación técnica: la regla `github-pat` de gitleaks exige entropía >= 3
+> (`entropy = 3` en la configuración oficial). El valor del laboratorio es
+> `ghp_` seguido de 36 ceros, cuya entropía es 0, por lo que la herramienta no
+> lo reporta aunque el formato coincida. Es un falso negativo del escáner, no
+> una ausencia de riesgo.
+
+## 2. Diagnóstico con la misma regla sin el filtro de entropía
+
+Para comprobar qué habría reportado la regla `github-pat`, se ejecutó gitleaks
+con una copia de la configuración oficial de la versión 8.30.1 a la que se le
+quitó únicamente la línea `entropy = 3` de esa regla (no se modificó el
+repositorio analizado):
+
+    $ gitleaks dir . -c gitleaks-diagnostic.toml
+    $ gitleaks git . -c gitleaks-diagnostic.toml
+
+Resultado sobre el árbol de trabajo:
+
+    RuleID:      github-pat
+    Archivo:     src/config.py
+    Línea:       5
+    Descripción: Uncovered a GitHub Personal Access Token, potentially leading to unauthorized repository access and sensitive content exposure.
+
+Resultado sobre el historial Git:
+
+    RuleID:      github-pat
+    Archivo:     src/config.py
+    Línea:       5
+    Commit:      74b291acea4169810f5dbe7d96dd4c8b6e7c3b50
+    Autor:       AndUm423
+    Fecha:       2026-11-20T16:23:15Z
+
+Valor detectado (ficticio, se muestra parcialmente):
+    ghp_0000...0000  (36 ceros; no es una credencial válida)
+
+Riesgo: un token en el código queda en el repositorio y en todo su historial.
+Cualquiera con acceso de lectura puede reutilizarlo si fuera real; borrarlo de
+la última versión no lo elimina de los commits anteriores.

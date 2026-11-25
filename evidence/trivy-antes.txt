@@ -1,0 +1,35 @@
+# Evidencia Trivy — estado inicial (antes de corregir)
+
+Herramienta: trivy 0.76.2
+Imagen: security-as-code-lab:local (Dockerfile original, `urllib3==1.25.3`)
+Comando: `trivy image --scanners vuln --severity HIGH,CRITICAL security-as-code-lab:local`
+Fecha: 2026-11-25
+
+## Resumen
+
+    Sistema operativo (Debian 13.8): 54 vulnerabilidades HIGH/CRITICAL
+    Dependencias Python:              9 vulnerabilidades HIGH/CRITICAL
+
+## Hallazgos en dependencias de la aplicación
+
+| CVE | Paquete | Instalada | Corregida | Severidad | Título |
+|---|---|---|---|---|---|
+| CVE-2026-23949 | jaraco.context | 5.3.0 | 6.1.0 | HIGH | jaraco.context: jaraco.context: Path traversal via malicious tar archives |
+| CVE-2020-7212 | urllib3 | 1.25.3 | 1.25.8 | HIGH | python-urllib3: inefficient algorithm allows a DoS (CPU consumption) in _encode_invalid_chars function in util/url.py |
+| CVE-2023-43804 | urllib3 | 1.25.3 | 2.0.6, 1.26.17 | HIGH | python-urllib3: Cookie request header isn't stripped during cross-origin redirects |
+| CVE-2025-66418 | urllib3 | 1.25.3 | 2.6.0 | HIGH | urllib3: urllib3: Unbounded decompression chain leads to resource exhaustion |
+| CVE-2025-66471 | urllib3 | 1.25.3 | 2.6.0 | HIGH | urllib3: urllib3 Streaming API improperly handles highly compressed data |
+| CVE-2026-21441 | urllib3 | 1.25.3 | 2.6.3 | HIGH | urllib3: urllib3 vulnerable to decompression-bomb safeguard bypass when following HTTP redirects (streaming API) |
+| CVE-2026-44431 | urllib3 | 1.25.3 | 2.7.0 | HIGH | urllib3: urllib3: Information disclosure via cross-origin redirects forwarding sensitive headers |
+| CVE-2026-97689 | urllib3 | 1.25.3 | 2.8.0 | HIGH | urllib3: urllib3: Denial of Service via unbounded memory allocation in chunk parser |
+| CVE-2026-24049 | wheel | 0.45.1 | 0.46.2 | HIGH | wheel: wheel: Privilege Escalation or Arbitrary Code Execution via malicious wheel file unpacking |
+
+Los 9 hallazgos de Python corresponden a `urllib3==1.25.3` (8 CVEs) y a
+`wheel 0.45.1` (1 CVE) que arrastra la imagen base. `wheel` y `jaraco.context`
+no son dependencias declaradas por la aplicación: vienen del entorno de Python
+de la imagen.
+
+Las 54 vulnerabilidades del sistema operativo pertenecen a la imagen base
+`python:3.11-slim`; la mayoría no tiene versión corregida publicada por Debian
+al momento del análisis (ver columna "Fixed Version" vacía en el reporte
+completo). Se documentan como riesgo residual de la imagen base.
