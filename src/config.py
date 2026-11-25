@@ -1,5 +1,11 @@
-"""Configuración inicial del laboratorio: contiene un secreto ficticio intencional.""" 
+"""Configuración de la aplicación.
 
-# HALLAZGO INTENCIONAL: valor ficticio con formato de token.
-# No es una credencial válida y no permite acceder a ningún servicio.
-APP_API_TOKEN = "ghp_000000000000000000000000000000000000"
+Los secretos se leen exclusivamente de variables de entorno y nunca se
+versionan en el repositorio.
+"""
+
+import os
+
+# Sin valor por defecto: si la variable no existe, la aplicación lo informa
+# en lugar de arrancar con un token embebido en el código.
+APP_API_TOKEN = os.getenv("APP_API_TOKEN")

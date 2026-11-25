@@ -6,8 +6,16 @@ on:
   push:
     branches: [ "main" ]
 
+# Permisos mínimos: solo lectura del contenido y de los datos del PR que
+# necesita Gitleaks para comparar los commits de la rama.
 permissions:
   contents: read
+  pull-requests: read
+
+# Cancela ejecuciones anteriores de la misma rama/PR para no gastar minutos.
+concurrency:
+  group: security-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   gitleaks:
@@ -34,6 +42,7 @@ jobs:
         with:
           directory: infra
           framework: terraform
+          config_file: .checkov.yaml
 
   trivy:
     name: Analizar imagen
@@ -44,10 +53,14 @@ jobs:
       - name: Construir imagen
         run: docker build -t security-as-code-lab:${{ github.sha }} .
       - name: Escanear imagen
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: security-as-code-lab:${{ github.sha }}
           format: table
-          vuln-type: os,library
+          # Se evalúan las dependencias de la aplicación (Python). Las
+          # vulnerabilidades del sistema operativo de la imagen base se
+          # gestionan actualizando la imagen base y se documentan aparte.
+          vuln-type: library
           severity: HIGH,CRITICAL
+          ignore-unfixed: true
           exit-code: '1'

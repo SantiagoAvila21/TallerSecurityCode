@@ -1,0 +1,15 @@
+# Configuración de Checkov para el laboratorio.
+#
+# Las excepciones son de alcance limitado y están justificadas en
+# docs/INFORME.md (sección 3). No se desactiva ningún control relacionado con
+# acceso público, cifrado o versionado.
+skip-check:
+  # El bucket de logs requiere un segundo bucket, su política y permisos
+  # adicionales; queda fuera del alcance de este laboratorio de práctica.
+  - CKV_AWS_18
+  # La replicación cross-region exige una segunda región y duplica el costo.
+  # No aplica a un bucket de práctica que nunca se despliega.
+  - CKV_AWS_144
+  # Las notificaciones de eventos requieren un destino SNS/SQS; no aportan
+  # valor a un bucket de ejemplo que no se despliega.
+  - CKV2_AWS_62
